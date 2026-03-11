@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MC Food Addon Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070e;--sf:#0d0d1a;--card:#121220;--brd:#1e1e38;--brite:#2a2a50;
+  --gold:#f0a830;--gold2:#7a4e08;--teal:#28e0c0;--pur:#b050e8;
+  --red:#e83838;--grn:#30d870;--blu:#3098f0;--orn:#e8a030;
+  --txt:#c0c0e0;--dim:#484870;--dimtxt:#6868a0;
+  --px:'Press Start 2P',monospace;--mo:'VT323',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scrollbar-width:thin;scrollbar-color:var(--brite) var(--bg);}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--brite);}
+body{font-family:var(--mo);background:var(--bg);color:var(--txt);font-size:17px;min-height:100vh;}
+
+#hdr{
+  background:var(--sf);border-bottom:3px solid var(--brd);
+  padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+#hdr h1{font-family:var(--px);font-size:8px;color:var(--gold);text-shadow:0 0 20px rgba(240,168,48,.5);letter-spacing:1px;}
+#hdr .sub{font-family:var(--px);font-size:5px;color:var(--teal);margin-top:4px;letter-spacing:1px;}
+.hbtns{display:flex;gap:8px;align-items:center;}
+.hbtn{font-family:var(--px);font-size:6px;padding:7px 13px;border:2px solid;cursor:pointer;background:transparent;letter-spacing:1px;transition:all .12s;}
+.hbtn-g{border-color:var(--gold);color:var(--gold);}
+.hbtn-g:hover{background:rgba(240,168,48,.12);box-shadow:0 0 14px rgba(240,168,48,.3);}
+.hbtn-t{border-color:var(--teal);color:var(--teal);}
+.hbtn-t:hover{background:rgba(40,224,192,.1);}
+
+#wrap{max-width:1080px;margin:0 auto;padding:18px 16px 40px;}
+
+.sec{border:2px solid var(--brd);background:var(--card);margin-bottom:14px;}
+.sech{font-family:var(--px);font-size:6px;color:var(--teal);padding:6px 10px;background:var(--sf);border-bottom:2px solid var(--brd);letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.secb{padding:12px 14px;}
+
+.fr{margin-bottom:10px;}
+.fr label{font-family:var(--px);font-size:5px;color:var(--dim);display:block;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;}
+.fi{width:100%;background:var(--bg);border:2px solid var(--brite);color:var(--txt);padding:5px 8px;font-family:var(--mo);font-size:16px;outline:none;transition:border .1s;}
+.fi:focus{border-color:var(--gold);}
+select.fi option{background:var(--card);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+.note{font-size:13px;color:var(--dimtxt);margin-top:3px;line-height:1.5;}
+.note-g{font-size:13px;color:var(--grn);margin-top:5px;padding:5px 8px;border-left:3px solid var(--grn);background:rgba(48,216,112,.06);}
+.note-w{font-size:13px;color:#e8b030;margin-top:5px;padding:5px 8px;border-left:3px solid #e8b030;background:rgba(232,176,48,.06);}
+.note-t{font-size:13px;color:var(--teal);margin-top:5px;padding:5px 8px;border-left:3px solid var(--teal);background:rgba(40,224,192,.06);}
+
+.chkrow{display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;}
+.chkrow input[type=checkbox]{width:14px;height:14px;accent-color:var(--teal);cursor:pointer;}
+.chkrow span{font-size:14px;color:var(--txt);}
+
+.btn{font-family:var(--px);font-size:6px;padding:8px 14px;border:2px solid;cursor:pointer;background:transparent;letter-spacing:1px;transition:all .12s;}
+.btn-g{border-color:var(--gold);color:var(--gold);}
+.btn-g:hover{background:rgba(240,168,48,.12);}
+.btn-t{border-color:var(--teal);color:var(--teal);}
+.btn-t:hover{background:rgba(40,224,192,.1);}
+.btn-r{border-color:var(--red);color:var(--red);}
+.btn-r:hover{background:rgba(232,56,56,.1);}
+.btn-o{border-color:var(--orn);color:var(--orn);}
+.btn-o:hover{background:rgba(232,160,48,.1);}
+.btn-dim{border-color:var(--brite);color:var(--dimtxt);}
+.btn-dim:hover{border-color:var(--txt);color:var(--txt);}
+.btn-sm{font-size:5px;padding:5px 9px;}
+.btn-lg{font-size:8px;padding:12px 20px;}
+
+.recto{display:flex;gap:6px;margin-bottom:12px;}
+.recto .btn{flex:1;text-align:center;}
+.recto .btn.on{background:rgba(40,224,192,.12);color:var(--teal);border-color:var(--teal);}
+
+.efbox{background:var(--sf);border:2px solid var(--brd);margin-bottom:8px;padding:10px 12px;}
+.efhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.efhdr span{font-family:var(--px);font-size:5px;color:var(--orn);letter-spacing:1px;}
+
+.cg-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.crafting-grid{display:grid;grid-template-columns:repeat(3,72px);gap:4px;}
+.crafting-slot{width:72px;height:72px;border:2px solid var(--brite);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:var(--dimtxt);transition:all .12s;word-break:break-all;text-align:center;padding:4px;font-family:var(--mo);}
+.crafting-slot:hover{border-color:var(--teal);}
+.crafting-slot.sel{border-color:var(--gold);background:rgba(240,168,48,.06);}
+.crafting-slot.filled{background:rgba(40,224,192,.07);color:var(--teal);border-color:var(--teal);}
+.cg-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;}
+
+.cv-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+#pixelCanvas{border:3px solid var(--brd);cursor:crosshair;image-rendering:pixelated;box-shadow:0 0 24px rgba(40,224,192,.1);}
+.cprow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.cprow label{font-family:var(--px);font-size:5px;color:var(--dim);letter-spacing:1px;}
+input[type="color"]{width:48px;height:34px;border:2px solid var(--brite);background:transparent;cursor:pointer;padding:2px;}
+#colorDisplay{font-family:var(--px);font-size:7px;color:var(--gold);}
+.cv-tools{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+
+.ingbox{background:var(--sf);border:2px solid var(--brd);margin-bottom:8px;padding:10px 12px;}
+.inghdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.inghdr span{font-family:var(--px);font-size:5px;color:var(--pur);letter-spacing:1px;}
+
+.sep{width:100%;height:2px;background:var(--brd);margin:8px 0;}
+
+#expbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:18px 0 8px;}
+
+#debugSection{display:none;}
+.debug-panel{background:#020208;color:#00ff88;padding:14px;font-family:'Courier New',monospace;font-size:11px;max-height:380px;overflow-y:auto;white-space:pre-wrap;border:1px solid var(--grn);}
+
+@media(max-width:680px){
+  .row2,.row3{grid-template-columns:1fr;}
+  #hdr h1{font-size:6px;}
+  .hbtns{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div>
+    <h1>🍎 MC FOOD ADDON CREATOR</h1>
+    <div class="sub">WORKING EATING + CRAFTING RECIPES · NO EXPERIMENTS NEEDED</div>
+  </div>
+  <div class="hbtns">
+    <button class="hbtn hbtn-g" onclick="generateAddon()">⬇ GENERATE .MCADDON</button>
+    <button class="hbtn hbtn-t" onclick="toggleDebug()">⌨ VIEW CODE</button>
+  </div>
+</div>
+
+<div id="wrap">
+
+  <!-- BASIC INFO -->
+  <div class="sec">
+    <div class="sech">📋 ADDON INFO</div>
+    <div class="secb">
+      <div class="row2">
+        <div class="fr"><label>Addon Name</label><input type="text" class="fi" id="addonName" value="My Food Addon"></div>
+        <div class="fr"><label>Description</label><input type="text" class="fi" id="addonDesc" value="Adds a custom food item"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOD SETTINGS -->
+  <div class="sec">
+    <div class="sech">🍕 FOOD SETTINGS</div>
+    <div class="secb">
+      <div class="row2">
+        <div class="fr"><label>Display Name</label><input type="text" class="fi" id="itemName" value="Custom Food"></div>
+        <div class="fr"><label>Item ID (no spaces)</label><input type="text" class="fi" id="itemId" value="custom_food"></div>
+        <div class="fr">
+          <label>Nutrition (hunger points)</label>
+          <input type="number" class="fi" id="nutrition" value="4" min="1" max="20">
+          <div class="note">1 = half a drumstick 🍗 · Steak = 8</div>
+        </div>
+        <div class="fr">
+          <label>Saturation (0.0 – 1.0)</label>
+          <input type="number" class="fi" id="saturation" value="0.6" min="0" max="1" step="0.1">
+          <div class="note">Higher = stays full longer · Steak = 0.8</div>
+        </div>
+        <div class="fr">
+          <label>Max Stack Size</label>
+          <input type="number" class="fi" id="stackSize" value="64" min="1" max="64">
+        </div>
+        <div class="fr">
+          <label>Eating Speed (seconds)</label>
+          <input type="number" class="fi" id="eatSpeed" value="1.6" min="0.1" max="10" step="0.1">
+          <div class="note">1.6 = normal · 0.8 = fast (dried kelp)</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <label class="chkrow"><input type="checkbox" id="alwaysEat"><span>Can eat when full (like Golden Apple)</span></label>
+    </div>
+  </div>
+
+  <!-- EFFECTS -->
+  <div class="sec">
+    <div class="sech">✨ EFFECTS ON EAT (max 3)</div>
+    <div class="secb">
+      <div class="note-g">Effects use @minecraft/server scripts — no experiments needed</div>
+      <div style="margin-top:10px;" id="effectsContainer"></div>
+      <button class="btn btn-o btn-sm" onclick="addEffect()" id="addEffectBtn" style="margin-top:4px;">+ ADD EFFECT</button>
+    </div>
+  </div>
+
+  <!-- RECIPE -->
+  <div class="sec">
+    <div class="sech">🔨 CRAFTING RECIPE</div>
+    <div class="secb">
+      <div class="note-g" style="margin-bottom:12px;">Recipes include proper unlock system — visible in recipe book</div>
+      <div class="recto">
+        <button class="btn btn-t on" id="btn-none" onclick="setRecipeType('none')">NO RECIPE</button>
+        <button class="btn btn-dim" id="btn-shaped" onclick="setRecipeType('shaped')">SHAPED</button>
+        <button class="btn btn-dim" id="btn-shapeless" onclick="setRecipeType('shapeless')">SHAPELESS</button>
+      </div>
+      <div id="recipeContainer" style="display:none;">
+        <div id="shapedRecipe" style="display:none;">
+          <div class="note" style="text-align:center;margin-bottom:10px;">Click a slot to select it, then pick an item below</div>
+          <div class="cg-wrap">
+            <div class="crafting-grid" id="craftingGrid"></div>
+            <div class="cg-controls">
+              <div class="fr" style="min-width:220px;margin:0;">
+                <label style="font-family:var(--px);font-size:5px;color:var(--dim);display:block;margin-bottom:3px;letter-spacing:1px;">ITEM FOR SELECTED SLOT</label>
+                <select class="fi" id="ingredientSelect" style="font-size:14px;"></select>
+              </div>
+              <button class="btn btn-r btn-sm" onclick="clearSelectedSlot()">CLEAR SLOT</button>
+            </div>
+          </div>
+        </div>
+        <div id="shapelessRecipe" style="display:none;">
+          <div id="shapelessContainer"></div>
+          <button class="btn btn-t btn-sm" onclick="addShapelessIngredient()" id="addIngredientBtn" style="margin-top:4px;">+ ADD INGREDIENT</button>
+          <div class="note" style="margin-top:6px;">1–9 ingredients in any order</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIXEL EDITOR -->
+  <div class="sec">
+    <div class="sech">🎨 FOOD TEXTURE (16×16)</div>
+    <div class="secb">
+      <div class="cv-wrap">
+        <canvas id="pixelCanvas" width="256" height="256"></canvas>
+        <div class="cprow">
+          <label>COLOR:</label>
+          <input type="color" id="colorPicker" value="#ff0000">
+          <span id="colorDisplay">#ff0000</span>
+        </div>
+        <div class="cv-tools">
+          <button class="btn btn-r btn-sm" onclick="clearCanvas()">✕ CLEAR</button>
+          <button class="btn btn-dim btn-sm" onclick="fillCanvas()">⬛ FILL ALL</button>
+          <button class="btn btn-dim btn-sm" onclick="importImage()">⬆ IMPORT IMAGE</button>
+          <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div id="expbar">
+    <button class="btn btn-g btn-lg" onclick="generateAddon()">⬇ GENERATE &amp; DOWNLOAD .MCADDON</button>
+    <button class="btn btn-t" onclick="toggleDebug()">⌨ VIEW GENERATED CODE</button>
+  </div>
+
+  <!-- DEBUG -->
+  <div class="sec" id="debugSection">
+    <div class="sech">⌨ GENERATED CODE PREVIEW</div>
+    <div class="secb" style="padding:0;">
+      <div class="debug-panel" id="debugPanel"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 16;
+        const pixelSize = canvas.width / gridSize;
+        
+        let isDrawing = false;
+        let pixelData = Array(gridSize).fill(null).map(() => Array(gridSize).fill('rgba(0,0,0,0)'));
+        let effectCount = 0;
+        let shapelessCount = 0;
+        let recipeType = 'none';
+        let selectedSlot = null;
+        let craftingPattern = Array(9).fill(null);
+        
+        const minecraftItems = [
+            'minecraft:apple', 'minecraft:wheat', 'minecraft:sugar', 'minecraft:egg',
+            'minecraft:milk_bucket', 'minecraft:cocoa_beans', 'minecraft:carrot', 'minecraft:potato',
+            'minecraft:beetroot', 'minecraft:melon_slice', 'minecraft:sweet_berries', 'minecraft:glow_berries',
+            'minecraft:honey_bottle', 'minecraft:bread', 'minecraft:cooked_beef', 'minecraft:cooked_chicken',
+            'minecraft:cooked_mutton', 'minecraft:cooked_porkchop', 'minecraft:cooked_rabbit', 'minecraft:cooked_salmon',
+            'minecraft:cooked_cod', 'minecraft:mushroom_stew', 'minecraft:rabbit_stew', 'minecraft:suspicious_stew',
+            'minecraft:baked_potato', 'minecraft:cookie', 'minecraft:pumpkin_pie', 'minecraft:stick',
+            'minecraft:iron_ingot', 'minecraft:gold_ingot', 'minecraft:diamond', 'minecraft:emerald',
+            'minecraft:coal', 'minecraft:redstone', 'minecraft:lapis_lazuli', 'minecraft:bowl',
+            'minecraft:paper', 'minecraft:book', 'minecraft:string', 'minecraft:leather',
+            'minecraft:cobblestone', 'minecraft:planks', 'minecraft:glass', 'minecraft:sand',
+            'minecraft:white_dye', 'minecraft:light_gray_dye', 'minecraft:gray_dye', 'minecraft:black_dye',
+            'minecraft:brown_dye', 'minecraft:red_dye', 'minecraft:orange_dye', 'minecraft:yellow_dye',
+            'minecraft:lime_dye', 'minecraft:green_dye', 'minecraft:cyan_dye', 'minecraft:light_blue_dye',
+            'minecraft:blue_dye', 'minecraft:purple_dye', 'minecraft:magenta_dye', 'minecraft:pink_dye'
+        ];
+        
+        const effects = [
+            'speed', 'slowness', 'haste', 'mining_fatigue', 'strength', 'instant_health',
+            'instant_damage', 'jump_boost', 'nausea', 'regeneration', 'resistance',
+            'fire_resistance', 'water_breathing', 'invisibility', 'blindness', 'night_vision',
+            'hunger', 'weakness', 'poison', 'wither', 'health_boost', 'absorption',
+            'saturation', 'levitation', 'fatal_poison', 'slow_falling'
+        ];
+        
+        ctx.fillStyle = '#07070e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+        
+        function toggleDebug() {
+            const section = document.getElementById('debugSection');
+            const panel = document.getElementById('debugPanel');
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                panel.style.display = 'block';
+                panel.textContent = generateCodePreview();
+                panel.scrollTop = 0;
+                section.scrollIntoView({behavior:'smooth'});
+            } else {
+                section.style.display = 'none';
+            }
+        }
+        
+        function generateCodePreview() {
+            const itemId = document.getElementById('itemId').value.replace(/\s+/g, '_').toLowerCase();
+            let output = "=== MC FOOD ADDON PREVIEW ===\n\n";
+            output += "KEY FEATURES:\n";
+            output += "- 'unlock' array included in recipes\n";
+            output += "- min_engine_version: 1.20.50\n";
+            output += "- Effects via @minecraft/server scripts\n";
+            output += "- NO experiments needed\n\n";
+            if (recipeType === 'shaped') {
+                const hasIngredients = craftingPattern.some(item => item !== null);
+                if (hasIngredients) {
+                    const uniqueIngredients = [...new Set(craftingPattern.filter(i => i))];
+                    output += "SHAPED RECIPE:\n- Unlocks when player collects: " + uniqueIngredients.join(', ') + "\n\n";
+                }
+            } else if (recipeType === 'shapeless' && shapelessCount > 0) {
+                output += "SHAPELESS RECIPE:\n- Ingredients in any order\n- Auto-unlocks in recipe book\n\n";
+            }
+            output += `=== BP: items/${itemId}.json ===\nFood components: nutrition, saturation, eat speed\n\n`;
+            output += `=== RP ===\n- textures/items/${itemId}.png\n- texts/en_US.lang`;
+            return output;
+        }
+        
+        function initCraftingGrid() {
+            const grid = document.getElementById('craftingGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'crafting-slot';
+                slot.dataset.index = i;
+                slot.onclick = () => selectSlot(i);
+                grid.appendChild(slot);
+            }
+            updateCraftingGrid();
+        }
+        
+        function selectSlot(index) {
+            selectedSlot = index;
+            document.querySelectorAll('.crafting-slot').forEach((s, i) => {
+                s.classList.toggle('sel', i === index);
+            });
+        }
+        
+        function updateCraftingGrid() {
+            document.querySelectorAll('.crafting-slot').forEach((slot, i) => {
+                if (craftingPattern[i]) {
+                    slot.textContent = craftingPattern[i].split(':')[1] || craftingPattern[i];
+                    slot.className = 'crafting-slot filled' + (selectedSlot === i ? ' sel' : '');
+                } else {
+                    slot.textContent = '';
+                    slot.className = 'crafting-slot' + (selectedSlot === i ? ' sel' : '');
+                }
+            });
+        }
+        
+        function clearSelectedSlot() {
+            if (selectedSlot !== null) { craftingPattern[selectedSlot] = null; updateCraftingGrid(); }
+        }
+        
+        const ingredientSelect = document.getElementById('ingredientSelect');
+        const defOpt = document.createElement('option');
+        defOpt.value = ''; defOpt.textContent = '-- Select Item --';
+        ingredientSelect.appendChild(defOpt);
+        minecraftItems.forEach(item => {
+            const o = document.createElement('option');
+            o.value = item; o.textContent = item.replace('minecraft:', '').replace(/_/g, ' ');
+            ingredientSelect.appendChild(o);
+        });
+        
+        const custOpt = document.createElement('option');
+        custOpt.value = 'CUSTOM'; custOpt.textContent = '-- Type Custom Item ID --';
+        ingredientSelect.appendChild(custOpt);
+
+        ingredientSelect.addEventListener('change', (e) => {
+            if (selectedSlot !== null && e.target.value) {
+                if (e.target.value === 'CUSTOM') {
+                    const c = prompt('Enter item ID (e.g. minecraft:stone or custom:my_item):');
+                    if (c && c.trim()) { craftingPattern[selectedSlot] = c.trim(); updateCraftingGrid(); }
+                } else {
+                    craftingPattern[selectedSlot] = e.target.value;
+                    updateCraftingGrid();
+                }
+            }
+        });
+        
+        function setRecipeType(type) {
+            recipeType = type;
+            ['none', 'shaped', 'shapeless'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                btn.className = `btn ${t === type ? 'btn-t on' : 'btn-dim'}`;
+            });
+            document.getElementById('recipeContainer').style.display = type === 'none' ? 'none' : 'block';
+            document.getElementById('shapedRecipe').style.display = type === 'shaped' ? 'block' : 'none';
+            document.getElementById('shapelessRecipe').style.display = type === 'shapeless' ? 'block' : 'none';
+            if (type === 'shaped') initCraftingGrid();
+        }
+        
+        function addEffect() {
+            if (effectCount >= 3) { alert('Maximum 3 effects!'); return; }
+            effectCount++;
+            const id = effectCount;
+            const opts = effects.map(e => `<option value="${e}">${e.replace(/_/g, ' ')}</option>`).join('');
+            const box = document.createElement('div');
+            box.className = 'efbox'; box.id = `effect-${id}`;
+            box.innerHTML = `
+                <div class="efhdr">
+                    <span>✨ EFFECT ${id}</span>
+                    <button class="btn btn-r btn-sm" onclick="removeEffect(${id})">REMOVE</button>
+                </div>
+                <div class="row2">
+                    <div class="fr"><label>Effect Type</label><select class="fi" id="effectType-${id}">${opts}</select></div>
+                    <div class="fr"><label>Duration (seconds)</label><input type="number" class="fi" id="effectDuration-${id}" value="5" min="1" max="999"></div>
+                    <div class="fr" style="grid-column:1/-1"><label>Amplifier (0=Level I · 1=Level II)</label><input type="number" class="fi" id="effectAmplifier-${id}" value="0" min="0" max="10"></div>
+                </div>`;
+            document.getElementById('effectsContainer').appendChild(box);
+            if (effectCount >= 3) { const b = document.getElementById('addEffectBtn'); b.disabled = true; b.style.opacity = '0.4'; }
+        }
+        
+        function removeEffect(id) {
+            document.getElementById(`effect-${id}`).remove();
+            effectCount--;
+            const b = document.getElementById('addEffectBtn'); b.disabled = false; b.style.opacity = '1';
+        }
+        
+        function addShapelessIngredient() {
+            if (shapelessCount >= 9) { alert('Maximum 9 ingredients!'); return; }
+            shapelessCount++;
+            const id = shapelessCount;
+            const opts = minecraftItems.map(item => `<option value="${item}">${item.replace('minecraft:', '').replace(/_/g, ' ')}</option>`).join('') + `<option value="CUSTOM">-- Type Custom Item ID --</option>`;
+            const box = document.createElement('div');
+            box.className = 'ingbox'; box.id = `ingredient-${id}`;
+            box.innerHTML = `
+                <div class="inghdr">
+                    <span>INGREDIENT ${id}</span>
+                    <button class="btn btn-r btn-sm" onclick="removeIngredient(${id})">REMOVE</button>
+                </div>
+                <div class="row2">
+                    <div class="fr"><label>Item</label>
+                        <select class="fi" id="ingredientItem-${id}" style="font-size:14px;" onchange="handleIngredientChange(${id})">${opts}</select>
+                        <input type="text" class="fi" id="ingredientItemCustom-${id}" placeholder="e.g. custom:my_item" style="display:none;margin-top:4px;font-size:15px;">
+                    </div>
+                    <div class="fr"><label>Count</label><input type="number" class="fi" id="ingredientCount-${id}" value="1" min="1" max="64"></div>
+                </div>`;
+            document.getElementById('shapelessContainer').appendChild(box);
+            if (shapelessCount >= 9) { const b = document.getElementById('addIngredientBtn'); b.disabled = true; b.style.opacity = '0.4'; }
+        }
+
+        function handleIngredientChange(id) {
+            const sel = document.getElementById(`ingredientItem-${id}`);
+            const cust = document.getElementById(`ingredientItemCustom-${id}`);
+            cust.style.display = sel.value === 'CUSTOM' ? 'block' : 'none';
+            if (sel.value === 'CUSTOM') cust.focus(); else cust.value = '';
+        }
+        
+        function removeIngredient(id) {
+            document.getElementById(`ingredient-${id}`).remove();
+            shapelessCount--;
+            const b = document.getElementById('addIngredientBtn'); b.disabled = false; b.style.opacity = '1';
+        }
+        
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(40,224,192,0.12)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= gridSize; i++) {
+                ctx.beginPath(); ctx.moveTo(i * pixelSize, 0); ctx.lineTo(i * pixelSize, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i * pixelSize); ctx.lineTo(canvas.width, i * pixelSize); ctx.stroke();
+            }
+        }
+        
+        function drawPixel(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+            pixelData[y][x] = color;
+            drawGrid();
+        }
+        
+        canvas.addEventListener('mousedown', e => { isDrawing = true; draw(e); });
+        canvas.addEventListener('mousemove', e => { if (isDrawing) draw(e); });
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseleave', () => isDrawing = false);
+        
+        function draw(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+            const x = Math.floor((e.clientX - rect.left) * scaleX / pixelSize);
+            const y = Math.floor((e.clientY - rect.top) * scaleY / pixelSize);
+            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize)
+                drawPixel(x, y, document.getElementById('colorPicker').value);
+        }
+        
+        document.getElementById('colorPicker').addEventListener('input', e => {
+            document.getElementById('colorDisplay').textContent = e.target.value;
+        });
+        
+        function clearCanvas() {
+            ctx.fillStyle = '#07070e'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            pixelData = Array(gridSize).fill(null).map(() => Array(gridSize).fill('rgba(0,0,0,0)'));
+            drawGrid();
+        }
+        
+        function fillCanvas() {
+            const color = document.getElementById('colorPicker').value;
+            for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) drawPixel(x, y, color);
+        }
+        
+        function importImage() { document.getElementById('imageUpload').click(); }
+        
+        document.getElementById('imageUpload').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const img = new Image();
+                img.onload = () => {
+                    const tc = document.createElement('canvas'); tc.width = tc.height = gridSize;
+                    const tx = tc.getContext('2d'); tx.drawImage(img, 0, 0, gridSize, gridSize);
+                    const d = tx.getImageData(0, 0, gridSize, gridSize);
+                    clearCanvas();
+                    for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) {
+                        const i = (y * gridSize + x) * 4;
+                        if (d.data[i + 3] > 0) drawPixel(x, y, `rgba(${d.data[i]},${d.data[i+1]},${d.data[i+2]},${d.data[i+3]/255})`);
+                    }
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+            });
+        }
+        
+        function canvasToBlob() {
+            return new Promise(resolve => {
+                const tc = document.createElement('canvas'); tc.width = tc.height = gridSize;
+                const tx = tc.getContext('2d');
+                for (let y = 0; y < gridSize; y++) for (let x = 0; x < gridSize; x++) {
+                    tx.fillStyle = pixelData[y][x]; tx.fillRect(x, y, 1, 1);
+                }
+                tc.toBlob(resolve);
+            });
+        }
+        
+        async function generateAddon() {
+            const addonName = document.getElementById('addonName').value;
+            const addonDesc = document.getElementById('addonDesc').value;
+            const itemName = document.getElementById('itemName').value;
+            const itemId = document.getElementById('itemId').value.replace(/\s+/g, '_').toLowerCase();
+            const nutrition = parseInt(document.getElementById('nutrition').value);
+            const saturation = parseFloat(document.getElementById('saturation').value);
+            const stackSize = parseInt(document.getElementById('stackSize').value);
+            const eatSpeed = parseFloat(document.getElementById('eatSpeed').value);
+            const alwaysEat = document.getElementById('alwaysEat').checked;
+            
+            const bpHeaderUUID = generateUUID(), bpModuleUUID = generateUUID();
+            const rpHeaderUUID = generateUUID(), rpModuleUUID = generateUUID();
+            
+            const effectsList = [];
+            for (let i = 1; i <= effectCount; i++) {
+                if (document.getElementById(`effect-${i}`)) {
+                    effectsList.push({
+                        name: document.getElementById(`effectType-${i}`).value,
+                        duration: parseInt(document.getElementById(`effectDuration-${i}`).value) * 20,
+                        amplifier: parseInt(document.getElementById(`effectAmplifier-${i}`).value)
+                    });
+                }
+            }
+            
+            const bpManifest = {
+                format_version: 2,
+                header: { name: addonName, description: addonDesc, uuid: bpHeaderUUID, version: [1,0,0], min_engine_version: [1,20,50] },
+                modules: [{ type: "data", uuid: bpModuleUUID, version: [1,0,0] }],
+                dependencies: [{ uuid: rpHeaderUUID, version: [1,0,0] }]
+            };
+            
+            if (effectsList.length > 0) {
+                bpManifest.modules.push({ type: "script", language: "javascript", uuid: generateUUID(), version: [1,0,0], entry: `scripts/${itemId}_effects.js` });
+                bpManifest.dependencies.push({ module_name: "@minecraft/server", version: "1.8.0" });
+            }
+            
+            const rpManifest = {
+                format_version: 2,
+                header: { name: addonName + " Resources", description: "Textures for " + addonName, uuid: rpHeaderUUID, version: [1,0,0], min_engine_version: [1,20,50] },
+                modules: [{ type: "resources", uuid: rpModuleUUID, version: [1,0,0] }]
+            };
+            
+            const itemComponents = {
+                "minecraft:icon": { texture: itemId },
+                "minecraft:display_name": { value: itemName },
+                "minecraft:max_stack_size": stackSize,
+                "minecraft:food": { nutrition, saturation_modifier: saturation, can_always_eat: alwaysEat },
+                "minecraft:use_animation": "eat",
+                "minecraft:use_modifiers": { use_duration: eatSpeed, movement_modifier: 0.35 },
+                "minecraft:tags": { tags: ["minecraft:is_food"] }
+            };
+            
+            const itemJson = {
+                format_version: "1.20.50",
+                "minecraft:item": {
+                    description: { identifier: `custom:${itemId}`, menu_category: { category: "items" } },
+                    components: itemComponents
+                }
+            };
+            
+            const textureJson = { resource_pack_name: addonName, texture_name: "atlas.items", texture_data: {} };
+            textureJson.texture_data[itemId] = { textures: `textures/items/${itemId}` };
+            
+            const iconCanvas = document.createElement('canvas'); iconCanvas.width = iconCanvas.height = 256;
+            const iconCtx = iconCanvas.getContext('2d');
+            iconCtx.fillStyle = '#07070e'; iconCtx.fillRect(0, 0, 256, 256);
+            iconCtx.font = 'bold 120px serif'; iconCtx.textAlign = 'center'; iconCtx.textBaseline = 'middle';
+            iconCtx.fillText('🍎', 128, 128);
+            
+            const zip = new JSZip();
+            const bpFolder = zip.folder(addonName + " BP");
+            bpFolder.file('manifest.json', JSON.stringify(bpManifest, null, 2));
+            bpFolder.file(`items/${itemId}.json`, JSON.stringify(itemJson, null, 2));
+            
+            if (effectsList.length > 0) {
+                const script = `import { world } from '@minecraft/server';
+
+// Apply effects when ${itemName} is consumed
+world.afterEvents.itemCompleteUse.subscribe((event) => {
+    const { itemStack, source } = event;
+    if (itemStack.typeId === 'custom:${itemId}') {
+        ${effectsList.map(e => `source.addEffect('${e.name}', ${e.duration}, { amplifier: ${e.amplifier}, showParticles: true });`).join('\n        ')}
+    }
+});`;
+                bpFolder.file(`scripts/${itemId}_effects.js`, script);
+            }
+            
+            const iconBlob = await new Promise(r => iconCanvas.toBlob(r));
+            bpFolder.file('pack_icon.png', iconBlob);
+            
+            const rpFolder = zip.folder(addonName + " RP");
+            rpFolder.file('manifest.json', JSON.stringify(rpManifest, null, 2));
+            rpFolder.file('textures/item_texture.json', JSON.stringify(textureJson, null, 2));
+            rpFolder.file('texts/en_US.lang', `item.custom:${itemId}.name=${itemName}`);
+            rpFolder.file(`textures/items/${itemId}.png`, await canvasToBlob());
+            rpFolder.file('pack_icon.png', iconBlob);
+            
+            if (recipeType === 'shaped') {
+                const hasIngredients = craftingPattern.some(item => item !== null);
+                if (hasIngredients) {
+                    const pattern = [], key = {}, chars = 'ABCDEFGHI'; let ci = 0; const i2c = {};
+                    for (let row = 0; row < 3; row++) {
+                        let rp = '';
+                        for (let col = 0; col < 3; col++) {
+                            const item = craftingPattern[row * 3 + col];
+                            if (item) { if (!i2c[item]) { i2c[item] = chars[ci++]; key[i2c[item]] = { item }; } rp += i2c[item]; }
+                            else rp += ' ';
+                        }
+                        pattern.push(rp);
+                    }
+                    const unique = [...new Set(craftingPattern.filter(i => i))];
+                    bpFolder.file(`recipes/${itemId}_recipe.json`, JSON.stringify({
+                        format_version: "1.20.50",
+                        "minecraft:recipe_shaped": {
+                            description: { identifier: `custom:${itemId}_recipe` },
+                            tags: ["crafting_table"], pattern, key,
+                            unlock: unique.map(item => ({ item })),
+                            result: { item: `custom:${itemId}`, count: 1 }
+                        }
+                    }, null, 2));
+                }
+            } else if (recipeType === 'shapeless') {
+                const ingredients = [], uniqueItems = new Set();
+                for (let i = 1; i <= shapelessCount; i++) {
+                    if (!document.getElementById(`ingredient-${i}`)) continue;
+                    const sel = document.getElementById(`ingredientItem-${i}`);
+                    const item = sel.value === 'CUSTOM'
+                        ? (document.getElementById(`ingredientItemCustom-${i}`).value.trim() || null)
+                        : sel.value;
+                    if (!item) continue;
+                    const count = parseInt(document.getElementById(`ingredientCount-${i}`).value);
+                    uniqueItems.add(item);
+                    for (let j = 0; j < count; j++) ingredients.push({ item });
+                }
+                if (ingredients.length > 0) {
+                    bpFolder.file(`recipes/${itemId}_recipe.json`, JSON.stringify({
+                        format_version: "1.20.50",
+                        "minecraft:recipe_shapeless": {
+                            description: { identifier: `custom:${itemId}_recipe` },
+                            tags: ["crafting_table"], ingredients,
+                            unlock: [...uniqueItems].map(item => ({ item })),
+                            result: { item: `custom:${itemId}`, count: 1 }
+                        }
+                    }, null, 2));
+                }
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(content);
+            const a = document.createElement('a'); a.href = url; a.download = `${itemId}_addon.mcaddon`; a.click();
+            URL.revokeObjectURL(url);
+            
+            const feats = [];
+            feats.push(`🍗 Nutrition: ${nutrition} · Saturation: ${saturation}`);
+            feats.push(`⏱ Eat speed: ${eatSpeed}s`);
+            if (alwaysEat) feats.push('✅ Can eat when full');
+            if (effectsList.length > 0) feats.push(`✨ ${effectsList.length} effect(s) on eat`);
+            if (recipeType !== 'none') feats.push(`🔨 ${recipeType} recipe included`);
+            alert(`✅ FOOD ADDON GENERATED!\n\n${feats.join('\n')}\n\n📋 INSTALL:\n1. Open the .mcaddon file\n2. Enable BOTH packs in a new world\n3. /give @s custom:${itemId}\n4. EAT IT! 🍽️`);
+        }
+</script>
+</body>
+</html>
